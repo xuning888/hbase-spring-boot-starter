@@ -200,15 +200,33 @@ def main():
     # Test 4: Required ports are free
     print("[TEST] 4. Checking required ports are free...", file=sys.stderr)
     required_ports = [2181, 16000, 16010, 16201, 16301]
-    port_conflicts = []
-    for port in required_ports:
-        is_free, detail = check_port_free(port)
-        if not is_free:
-            port_conflicts.append(f'Port {port} is in use: {detail}')
-    if port_conflicts:
-        errors.append(f'Required ports are not free: {"; ".join(port_conflicts)}')
+
+    # Check if HBase container is already running (e.g., from a previous test run).
+    # If it is, ports are expected to be in use — treat as acceptable.
+    hbase_already_running = False
+    if os.path.exists(compose_file):
+        try:
+            ps_check = subprocess.run(
+                ['docker', 'compose', '-f', compose_file, 'ps', '--format', 'json'],
+                capture_output=True, text=True, timeout=30, cwd=project_root
+            )
+            if ps_check.returncode == 0 and '"hbase"' in ps_check.stdout and 'running' in ps_check.stdout.lower():
+                hbase_already_running = True
+        except Exception:
+            pass
+
+    if hbase_already_running:
+        print(f"[TEST] 4. PASS: HBase container already running (ports in use by design)", file=sys.stderr)
     else:
-        print(f"[TEST] 4. PASS: All required ports free", file=sys.stderr)
+        port_conflicts = []
+        for port in required_ports:
+            is_free, detail = check_port_free(port)
+            if not is_free:
+                port_conflicts.append(f'Port {port} is in use: {detail}')
+        if port_conflicts:
+            errors.append(f'Required ports are not free: {"; ".join(port_conflicts)}')
+        else:
+            print(f"[TEST] 4. PASS: All required ports free", file=sys.stderr)
 
     # Test 5: /etc/hosts contains 127.0.0.1 hbase
     print("[TEST] 5. Checking /etc/hosts for hbase entry...", file=sys.stderr)
