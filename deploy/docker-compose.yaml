@@ -1,0 +1,19 @@
+services:
+  hbase:
+    image: harisekhon/hbase:1.2
+    platform: linux/amd64
+    hostname: hbase
+    container_name: hbase
+    ports:
+      - "2181:2181"   # ZooKeeper
+      - "16000:16000" # HBase Master
+      - "16010:16010" # HBase Master Web UI
+      - "16201:16201" # HBase RegionServer RPC
+      - "16301:16301" # HBase RegionServer Info
+    volumes:
+      - hbase-data:/hbase-data
+      - zk-data:/tmp/hbase-root
+
+volumes:
+  hbase-data:
+  zk-data:
