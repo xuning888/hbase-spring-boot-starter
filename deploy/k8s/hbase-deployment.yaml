@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hbase-deployment
+  labels:
+    app: hbase
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hbase
+  template:
+    metadata:
+      labels:
+        app: hbase
+    spec:
+      containers:
+        - name: hbase
+          image: harisekhon/hbase:1.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: zk
+              containerPort: 2181
+              protocol: TCP
+            - name: hmaster-rpc
+              containerPort: 16000
+              protocol: TCP
+            - name: hmaster-webui
+              containerPort: 16010
+              protocol: TCP
+            - name: regionserver-info
+              containerPort: 16030
+              protocol: TCP
+            - name: regionserver-rpc
+              containerPort: 16201
+              protocol: TCP
+            - name: regionserver-info2
+              containerPort: 16301
+              protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: 16010
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /master-status
+              port: 16010
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 16010
+            periodSeconds: 30
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: hbase-data
+              mountPath: /hbase-data
+      volumes:
+        - name: hbase-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hbase-service
+  labels:
+    app: hbase
+spec:
+  type: NodePort
+  selector:
+    app: hbase
+  ports:
+    - name: zk
+      port: 2181
+      targetPort: 2181
+      protocol: TCP
+    - name: hmaster-rpc
+      port: 16000
+      targetPort: 16000
+      protocol: TCP
+    - name: hmaster-webui
+      port: 16010
+      targetPort: 16010
+      protocol: TCP
+    - name: regionserver-info
+      port: 16030
+      targetPort: 16030
+      protocol: TCP
+    - name: regionserver-rpc
+      port: 16201
+      targetPort: 16201
+      protocol: TCP
+    - name: regionserver-info2
+      port: 16301
+      targetPort: 16301
+      protocol: TCP
