@@ -13,9 +13,12 @@ public class HbaseComponent {
 
     private final HbaseAdminOperation hbaseAdminOperation;
 
+    private final HbaseSingleFamilyOperation hbaseSingleFamilyOperation;
+
     public HbaseComponent(Connection hbaseConn) {
         this.hbaseConn = hbaseConn;
         this.hbaseAdminOperation = new HbaseAdminOperation(this);
+        this.hbaseSingleFamilyOperation = new HbaseSingleFamilyOperation(this);
     }
 
     public Connection getHbaseConn() {
@@ -24,5 +27,9 @@ public class HbaseComponent {
 
     public HbaseAdminOperation getHbaseAdminOperation() {
         return this.hbaseAdminOperation;
+    }
+
+    public HbaseSingleFamilyOperation getHbaseSingleFamilyOperation() {
+        return hbaseSingleFamilyOperation;
     }
 }
