@@ -30,9 +30,7 @@ public class HbaseSingleFamilyOperation {
      * 保存一行数据
      */
     public boolean put(String tableName, String rowKey, String family, Map<String, String> familyMap) {
-        try (Connection hbaseConn = hbaseComponent.getHbaseConn();
-             Table table = hbaseConn.getTable(TableName.valueOf(tableName))
-        ) {
+        try (Table table= hbaseComponent.getHbaseConn().getTable(TableName.valueOf(tableName))) {
             Put put = new Put(Bytes.toBytes(rowKey));
             HbaseUtils.appendPutFamily(put, family, familyMap);
             table.put(put);
@@ -49,9 +47,7 @@ public class HbaseSingleFamilyOperation {
     }
 
     public boolean putList(String tableName, String family, List<RowKeyAndMap> rowKeyAndMapList) {
-        try (Connection hbaseConn = hbaseComponent.getHbaseConn();
-             Table table = hbaseConn.getTable(TableName.valueOf(tableName))
-        ) {
+        try (Table table= hbaseComponent.getHbaseConn().getTable(TableName.valueOf(tableName))) {
             List<Put> puts = new ArrayList<>(rowKeyAndMapList.size());
             for (RowKeyAndMap rowKeyAndMap : rowKeyAndMapList) {
                 Put put = new Put(Bytes.toBytes(rowKeyAndMap.getRowKey()));
@@ -325,19 +321,21 @@ public class HbaseSingleFamilyOperation {
             scan.setStopRow(Bytes.toBytes(stopRow));
         }
 
-        if (filterList == null) {
-            filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+        FilterList topLevel = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+
+        if (filterList != null) {
+            topLevel.addFilter(filterList);
         }
 
         //过滤掉startRow
         if (startRow != null && !startRowInclusive) {
             RowFilter rowFilter = new RowFilter(CompareFilter.CompareOp.NOT_EQUAL, new BinaryComparator(Bytes.toBytes(startRow)));
-            filterList.addFilter(rowFilter);
+            topLevel.addFilter(rowFilter);
         }
         //默认加上分页。必须放在最后
         PageFilter pageFilter = new PageFilter(limit);
-        filterList.addFilter(pageFilter);
-        scan.setFilter(filterList);
+        topLevel.addFilter(pageFilter);
+        scan.setFilter(topLevel);
 
         if (family != null) {
             scan.addFamily(Bytes.toBytes(family));

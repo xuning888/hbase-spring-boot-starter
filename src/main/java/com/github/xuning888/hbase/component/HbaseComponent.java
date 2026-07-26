@@ -3,6 +3,8 @@ package com.github.xuning888.hbase.component;
 
 import org.apache.hadoop.hbase.client.Connection;
 
+import java.io.IOException;
+
 /**
  * @author xuning
  * @date 2026/7/25 16:03
@@ -31,5 +33,13 @@ public class HbaseComponent {
 
     public HbaseSingleFamilyOperation getHbaseSingleFamilyOperation() {
         return hbaseSingleFamilyOperation;
+    }
+
+    public void close() {
+        try {
+            this.hbaseConn.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

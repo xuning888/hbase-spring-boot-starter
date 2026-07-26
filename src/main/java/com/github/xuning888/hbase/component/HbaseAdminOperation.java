@@ -3,6 +3,8 @@ package com.github.xuning888.hbase.component;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.NamespaceDescriptor;
+import org.apache.hadoop.hbase.NamespaceNotFoundException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.slf4j.Logger;
@@ -50,6 +52,18 @@ public class HbaseAdminOperation {
         try (Admin admin = hbaseComponent.getHbaseConn().getAdmin()) {
 
             TableName tableNameObject = TableName.valueOf(tableName);
+
+            String namespace = tableNameObject.getNamespaceAsString();
+            if (!namespace.isEmpty()) {
+                try {
+                    admin.getNamespaceDescriptor(namespace);
+                } catch (NamespaceNotFoundException e) {
+                    logger.info("namespace not found, creating namespace = {}", namespace);
+                    NamespaceDescriptor namespaceDescriptor = NamespaceDescriptor.create(namespace).build();
+                    admin.createNamespace(namespaceDescriptor);
+                }
+            }
+
             if (admin.tableExists(tableNameObject)) {
                 logger.warn("table exists, tableName = {}", tableName);
             } else {
