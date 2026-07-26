@@ -1,28 +1,28 @@
 {
   "version": "1.0",
   "created_at": "2026-07-25T20:27:19.522072+08:00",
-  "updated_at": "2026-07-25T20:27:19.522436+08:00",
+  "updated_at": "2026-07-25T21:13:01.267287+08:00",
   "tasks": [
     {
       "task_id": "task1",
       "task_name": "编写 docker-compose 部署文件并启动验证单机 HBase",
-      "status": "completed",
+      "status": "failed",
       "dependencies": [],
-      "attempts": 1,
+      "attempts": 0,
+      "error": "task failed after 5 attempts: test did not pass: /etc/hosts does not contain \"hbase\" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts\n\nFull test output:\n{\"pass\": false, \"errors\": [\"/etc/hosts does not contain \\\"hbase\\\" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts\"]}\n\nSTDERR:\n[DEBUG] Project root: /Users/xuning/IdeaProjects/hbase-spring-boot-starter\n[DEBUG] Compose file: /Users/xuning/IdeaProjects/hbase-spring-boot-starter/deploy/docker-compose.yaml\n[TEST] 1. Checking docker-compose.yaml exists...\n[TEST] 1. PASS: /Users/xuning/IdeaProjects/hbase-spring-boot-starter/deploy/docker-compose.yaml exists\n[TEST] 2. Checking Docker is running...\n[TEST] 2. PASS: Docker 28.5.2 is running\n[TEST] 3. Checking Rosetta emulation (amd64 on arm64)...\n[TEST] 3. PASS: Rosetta emulation works (x86_64 confirmed)\n[TEST] 4. Checking required ports are free...\n[TEST] 4. PASS: HBase container already running (ports in use by design)\n[TEST] 5. Checking /etc/hosts for hbase entry...\n[TEST] 6. Starting HBase with docker compose up -d...\n[TEST] 6. PASS: docker compose up -d succeeded\n[TEST] 7. Performing readiness check (retry up to 480s)...\n[TEST] 7. PASS: HBase is ready\n[TEST] 8. Idempotent restart: running up -d again...\n[TEST] 8. PASS: Idempotent restart - no recreate\n[TEST] 9. Checking readiness after idempotent restart...\n[TEST] 9. PASS: Readiness still OK after idempotent restart\n[TEST] 10. Writing test data for persistence check...\n[TEST] 10. PASS: Test data written (t_persist table created)\n[TEST] 11. Restart cycle: docker compose down \u0026\u0026 up -d...\n[TEST] 11. PASS: Restart cycle completed\n[TEST] 12. Waiting for readiness after restart...\n[DEBUG] Readiness check failed at 0s, retrying in 10s (max 480s remaining). Failures: ['curl master-status failed (rc=56): ', 'nc ZK ruok failed: stdout=, stderr=']\n[TEST] 12. PASS: HBase ready after restart\n[TEST] 13. Verifying data persistence...\n[TEST] 13. PASS: Data persisted (rk1 found after restart)\n[TEST] 14. Cleanup: dropping test table...\n[TEST] 14. PASS: Cleanup completed\n",
       "created_at": "2026-07-25T20:27:19.522072+08:00",
-      "updated_at": "2026-07-25T13:05:00+08:00",
-      "commit_hash": "22438b6f281a8e6345f8a0bf1887cbe435c55286"
+      "updated_at": "2026-07-25T21:13:01.266858+08:00"
     },
     {
       "task_id": "task2",
       "task_name": "编写 starter 集成测试并以 TDD 修复共享连接被关闭的缺陷",
-      "status": "pending",
+      "status": "running",
       "dependencies": [
         "task1"
       ],
       "attempts": 0,
       "created_at": "2026-07-25T20:27:19.522072+08:00",
-      "updated_at": "2026-07-25T20:27:19.522072+08:00"
+      "updated_at": "2026-07-25T21:13:01.267287+08:00"
     }
   ]
 }

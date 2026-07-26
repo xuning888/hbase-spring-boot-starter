@@ -262,10 +262,28 @@ check pass 后才算完成。
 **Previous test execution encountered errors. You may need to fix the test script.**
 
 ```
-com.docke 1727 xuning  166u  IPv6 0xf39af061537c532e      0t0  TCP *:16301 (LISTEN); /etc/hosts does not contain "hbase" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts
+[TEST] 7. PASS: HBase is ready
+[TEST] 8. Idempotent restart: running up -d again...
+[TEST] 8. PASS: Idempotent restart - no recreate
+[TEST] 9. Checking readiness after idempotent restart...
+[TEST] 9. PASS: Readiness still OK after idempotent restart
+[TEST] 10. Writing test data for persistence check...
+[TEST] 10. PASS: Test data written (t_persist table created)
+[TEST] 11. Restart cycle: docker compose down && up -d...
+[TEST] 11. PASS: Restart cycle completed
+[TEST] 12. Waiting for readiness after restart...
+[DEBUG] Readiness check failed at 0s, retrying in 10s (max 480s remaining). Failures: ['curl master-status failed (rc=56): ', 'nc ZK ruok failed: stdout=, stderr=']
+[TEST] 12. PASS: HBase ready after restart
+[TEST] 13. Verifying data persistence...
+[TEST] 13. PASS: Data persisted (rk1 found after restart)
+[TEST] 14. Cleanup: dropping test table...
+[TEST] 14. PASS: Cleanup completed
+
+=== Attempt 4 ===
+test did not pass: /etc/hosts does not contain "hbase" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts
 
 Full test output:
-{"pass": false, "errors": ["Required ports are not free: Port 2181 is in use: COMMAND    PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 1727 xuning  167u  IPv6 0xd7d37b70358f5204      0t0  TCP *:2181 (LISTEN); Port 16000 is in use: COMMAND    PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 1727 xuning  160u  IPv6 0x9dabe6d5d1117523      0t0  TCP *:16000 (LISTEN); Port 16010 is in use: COMMAND    PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 1727 xuning  168u  IPv6 0x65c7eba0aa4e75da      0t0  TCP *:16010 (LISTEN); Port 16201 is in use: COMMAND    PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 1727 xuning  136u  IPv6 0xac33254663a32dac      0t0  TCP *:16201 (LISTEN); Port 16301 is in use: COMMAND    PID   USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 1727 xuning  166u  IPv6 0xf39af061537c532e      0t0  TCP *:16301 (LISTEN)", "/etc/hosts does not contain \"hbase\" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts"]}
+{"pass": false, "errors": ["/etc/hosts does not contain \"hbase\" entry. Run: echo '127.0.0.1 hbase' | sudo tee -a /etc/hosts"]}
 
 STDERR:
 [DEBUG] Project root: /Users/xuning/IdeaProjects/hbase-spring-boot-starter
@@ -277,6 +295,7 @@ STDERR:
 [TEST] 3. Checking Rosetta emulation (amd64 on arm64)...
 [TEST] 3. PASS: Rosetta emulation works (x86_64 confirmed)
 [TEST] 4. Checking required ports are free...
+[TEST] 4. PASS: HBase container already running (ports in use by design)
 [TEST] 5. Checking /etc/hosts for hbase entry...
 [TEST] 6. Starting HBase with docker compose up -d...
 [TEST] 6. PASS: docker compose up -d succeeded
